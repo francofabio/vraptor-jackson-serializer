@@ -5,7 +5,7 @@ This project is a plugin for VRaptor JSON Serialization using jackson library (h
 ## INSTALATION
 
     download and install gradle (gradle.org)
-    git clone 
+    git clone git@github.com:francofabio/vraptor-jackson-serializer.git
     cd vraptor-jackson-serializer
     gradle clean jar
 
