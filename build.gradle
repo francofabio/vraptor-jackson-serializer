@@ -1,0 +1,40 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+sourceCompatibility = 1.6
+targetCompatibility = 1.6
+
+[compileJava, compileTestJava]*.options.collect {options -> options.encoding = 'UTF-8'}
+
+task createPrefs << {
+    java.util.Properties props = new java.util.Properties()
+    props.setProperty("eclipse.preferences.version", "1")
+    props.setProperty("encoding/<project>","UTF-8")
+    File outDir = new File(".settings/")
+    File prefsFile = new File(outDir, "org.eclipse.core.resources.prefs")
+    if (!outDir.exists()) {
+	outDir.mkdirs()
+    }
+    props.store(new java.io.FileOutputStream(prefsFile),null)
+}
+
+eclipse.dependsOn(createPrefs)
+
+dependencies {
+    compile 'org.slf4j:jcl-over-slf4j:1.6.1'
+    compile 'br.com.caelum:vraptor:3.4.0'
+    compile 'org.codehaus.jackson:jackson-core-lgpl:1.9.0'
+    compile 'org.codehaus.jackson:jackson-mapper-lgpl:1.9.0'
+    compile 'org.codehaus.jackson:jackson-xc:1.9.0'
+    compile 'log4j:log4j:1.2.16'
+    compile 'javax.servlet:servlet-api:2.5'
+    
+    testCompile 'junit:junit:4.8.2'
+    testCompile 'org.mockito:mockito-all:1.9.0-rc1'
+}
+
+repositories {
+  mavenCentral()
+  mavenRepo urls: 'https://repository.jboss.org/nexus/content/repositories/releases/'
+}
+

@@ -1,0 +1,33 @@
+# Dirs
+build/
+dist/
+classes/
+bin/
+out/
+nbproject/private/**/*
+
+# config
+.gradle/
+.settings/
+.classpath
+.project
+
+# Binary
+*.class
+*.jar
+*.exe
+*.dll
+*.bin
+*.o
+*.a
+*.os
+
+# Tmp
+*.~*
+*.lock
+*.DS_Store
+*.swp
+*.out
+*.dcu
+*.ddp
+
