@@ -1,6 +1,6 @@
 ## ABOUT
  
-This project is a plugin for VRaptor JSON Serialization using jackson library (http://jackson.codehaus.org/)
+VRaptor plugin for JSON serialization using jackson library (http://jackson.codehaus.org)
 
 ## INSTALATION
 
