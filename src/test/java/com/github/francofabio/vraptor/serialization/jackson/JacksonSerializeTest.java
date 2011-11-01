@@ -1,4 +1,4 @@
-package br.com.caelum.vraptor.serialization.jackson;
+package com.github.francofabio.vraptor.serialization.jackson;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -20,6 +20,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import com.github.francofabio.vraptor.serialization.jackson.JacksonSerialization;
 
 public class JacksonSerializeTest {
 

@@ -1,10 +1,23 @@
-apply plugin: 'java'
-apply plugin: 'eclipse'
+apply plugin: "java"
+apply plugin: "eclipse"
+apply plugin: "maven"
+apply plugin: "signing"
+
+description = "VRaptor plugin for JSON serialization using jackson library"
+group = "com.github.francofabio"
+version = "1.0.1"
 
 sourceCompatibility = 1.6
 targetCompatibility = 1.6
 
-[compileJava, compileTestJava]*.options.collect {options -> options.encoding = 'UTF-8'}
+[compileJava, compileTestJava]*.options.collect {options -> options.encoding = "UTF-8"}
+
+repositories {
+  mavenCentral()
+  maven {
+    url "https://repository.jboss.org/nexus/content/repositories/releases/"
+  }
+}
 
 task createPrefs << {
     java.util.Properties props = new java.util.Properties()
@@ -17,24 +30,111 @@ task createPrefs << {
     }
     props.store(new java.io.FileOutputStream(prefsFile),null)
 }
+tasks.eclipse.dependsOn(createPrefs)
 
-eclipse.dependsOn(createPrefs)
+configurations {
+    deployerJars {
+    }
+}
 
 dependencies {
-    compile 'org.slf4j:jcl-over-slf4j:1.6.1'
-    compile 'br.com.caelum:vraptor:3.4.0'
-    compile 'org.codehaus.jackson:jackson-core-lgpl:1.9.0'
-    compile 'org.codehaus.jackson:jackson-mapper-lgpl:1.9.0'
-    compile 'org.codehaus.jackson:jackson-xc:1.9.0'
-    compile 'log4j:log4j:1.2.16'
-    compile 'javax.servlet:servlet-api:2.5'
+    compile "org.slf4j:jcl-over-slf4j:1.6.1"
+    compile "br.com.caelum:vraptor:3.4.0"
+    compile "org.codehaus.jackson:jackson-core-lgpl:1.9.0"
+    compile "org.codehaus.jackson:jackson-mapper-lgpl:1.9.0"
+    compile "log4j:log4j:1.2.16"
+    compile "javax.servlet:servlet-api:2.5"
+    deployerJars "org.apache.maven.wagon:wagon-http:1.0-beta-6"
     
-    testCompile 'junit:junit:4.8.2'
-    testCompile 'org.mockito:mockito-all:1.9.0-rc1'
+    testCompile "junit:junit:4.8.2"
+    testCompile "org.mockito:mockito-all:1.9.0-rc1"
 }
 
-repositories {
-  mavenCentral()
-  mavenRepo urls: 'https://repository.jboss.org/nexus/content/repositories/releases/'
+manifest.mainAttributes(
+    provider: "gradle",
+    "Implementation-Url": "https://github.com/francofabio/vraptor-jackson-serializer",
+    "Implementation-Version": version,
+    "Implementation-Vendor": "francofabio",
+    "Implementation-Vendor-Id": "com.github.francofabio"
+)
+
+task sourcesJar(type: Jar, dependsOn: compileJava) {
+    classifier = "sources"
+    from sourceSets.main.allSource
 }
 
+task javadocJar(type: Jar, dependsOn:javadoc) {
+     classifier = "javadoc"
+     from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+tasks.uploadArchives.dependsOn sourcesJar
+
+signing {
+    sign configurations.archives
+}
+
+def pomConfig = {
+    name "vraptor-jackson-serializer"
+    description "VRaptor plugin for JSON serialization using jackson library"
+    packaging "jar"
+    url "https://github.com/francofabio/vraptor-jackson-serializer"
+    
+    parent {
+	groupId "org.sonatype.oss"
+	artifactId "oss-parent"
+	version "3"
+    }
+    
+    issueManagement {
+        system "github"
+        url "https://github.com/francofabio/vraptor-jackson-serializer/issues"
+    }
+    scm {
+	url "https://github.com/francofabio/vraptor-jackson-serializer"
+	connection "scm:git:git://github.com/francofabio/vraptor-jackson-serializer"
+	developerConnection "scm:git:git@github.com:francofabio/vraptor-jackson-serializer.git"
+    }
+    licenses {
+	license {
+	    name "Apache License, Version 2.0"
+	    url "http://www.apache.org/licenses/LICENSE-2.0.html"
+	    distribution "repo"
+	}
+    }
+    developers {
+        developer {
+            id "francofabio"
+            name "Fabio Franco"
+	    email "francofabio@gmail.com"
+	    timezone "-3"
+        }
+    }
+}
+
+if (! hasProperty( "user" ) ) {
+    user = "";
+}
+if (! hasProperty( "pass" ) ) {
+    pass = "";
+}
+
+uploadArchives {
+    repositories.mavenDeployer {
+        name = "jbossDeployer"
+        configuration = configurations.deployerJars
+        pom.project pomConfig
+	
+	beforeDeployment { MavenDeployment deployment ->
+	    signPom(deployment)
+	}
+	
+        repository(id: "nexus-releases", url: "http://oss.sonatype.org/service/local/staging/deploy/maven2") {
+            authentication(userName: user, password: pass)
+        }
+    }
+}

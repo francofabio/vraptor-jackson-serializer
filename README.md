@@ -16,5 +16,5 @@ VRaptor plugin for JSON serialization using jackson library (http://jackson.code
 
         <context-param>
             <param-name>br.com.caelum.vraptor.packages</param-name>
-            <param-value>br.com.caelum.vraptor.serialization.jackson</param-value>
+            <param-value>com.github.francofabio.vraptor.serialization.jackson</param-value>
         </context-param>

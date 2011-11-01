@@ -1,4 +1,4 @@
-package br.com.caelum.vraptor.serialization.jackson;
+package com.github.francofabio.vraptor.serialization.jackson;
 
 import java.util.LinkedList;
 import java.util.List;

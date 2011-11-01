@@ -1,4 +1,4 @@
-package br.com.caelum.vraptor.serialization.jackson;
+package com.github.francofabio.vraptor.serialization.jackson;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
