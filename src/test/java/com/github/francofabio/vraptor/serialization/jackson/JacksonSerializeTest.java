@@ -334,8 +334,7 @@ public class JacksonSerializeTest {
     }
 
     private String jsonResult() {
-        String json = output.toString();
-        return json;
+        return output.toString();
     }
 
     private Group createGroup(Long id) {
@@ -466,22 +465,45 @@ public class JacksonSerializeTest {
         jacksonSerialization.from(product).include("group").exclude("group.id").serialize();
         assertThat(jsonResult(), is(equalTo(expectedResult)));
     }
-    
+
     @Test
     public void shouldExcudeHierarchicalField() {
         String expectedResult = "{\"order\":{\"id\":1,\"customer\":{\"id\":1,\"name\":\"Franco\"},"
                 + "\"delivery\":{\"street\":\"delivery street\",\"city\":\"Bristol\",\"zipCode\":\"09887990\"},"
-        	+ "\"products\":[{\"id\":1,\"name\":\"Product 1\",\"creationDate\":\""
-                + currentDateAsStr
+                + "\"products\":[{\"id\":1,\"name\":\"Product 1\",\"creationDate\":\"" + currentDateAsStr
                 + "\",\"group\":{\"name\":\"Group 1\"}},{\"id\":2,\"name\":\"Product 2\",\"creationDate\":\""
                 + currentDateAsStr + "\",\"group\":{\"name\":\"Group 2\"}}]}}";
 
-        Order order = new Order(1L, new Customer(1L, "Franco", new Address("rua", "cidade", "9800989")),
-                new Address("delivery street", "Bristol", "09887990"));
+        Order order = new Order(1L, new Customer(1L, "Franco", new Address("rua", "cidade", "9800989")), new Address(
+                "delivery street", "Bristol", "09887990"));
         order.addProduct(createProductWithGroup(1L, 1L));
         order.addProduct(createProductWithGroup(2L, 2L));
-        
-        jacksonSerialization.from(order).include("customer", "delivery", "products", "products.group.name").serialize();
+
+        jacksonSerialization.from(order).include("customer", "delivery", "products", "products.group")
+                .exclude("products.group.id").serialize();
+        assertThat(jsonResult(), is(equalTo(expectedResult)));
+    }
+
+    @Test
+    public void shouldSerializeWithouRoot() {
+        String expectedResult = "{\"id\":1,\"name\":\"Product 1\",\"creationDate\":\"" + currentDateAsStr
+                + "\",\"group\":{\"name\":\"Group 1\"}}";
+
+        Group group = new Group(1L, "Group 1");
+        Product product = new Product(1L, "Product 1", currentDate, group);
+
+        jacksonSerialization.withoutRoot().from(product).include("group").exclude("group.id").serialize();
+        assertThat(jsonResult(), is(equalTo(expectedResult)));
+    }
+
+    @Test
+    public void shouldSerializeIndented() {
+        String expectedResult = "{\n  \"product\" : {\n    \"id\" : 1,\n    \"name\" : \"Product 1\",\n    \"creationDate\" : \"2011-11-01\",\n    \"group\" : {\n      \"id\" : 1,\n      \"name\" : \"Group 1\"\n    }\n  }\n}";
+
+        Group group = new Group(1L, "Group 1");
+        Product product = new Product(1L, "Product 1", currentDate, group);
+
+        jacksonSerialization.indented().from(product).include("group").serialize();
         assertThat(jsonResult(), is(equalTo(expectedResult)));
     }
 

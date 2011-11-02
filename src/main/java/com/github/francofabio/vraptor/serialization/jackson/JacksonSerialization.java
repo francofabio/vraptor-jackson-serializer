@@ -21,16 +21,18 @@ public class JacksonSerialization implements JSONSerialization {
 
     private final HttpServletResponse response;
     protected final ObjectMapper mapper;
-    
+    private boolean withoutRoot;
+
     @SuppressWarnings("deprecation")
     public JacksonSerialization(HttpServletResponse response) {
         this.response = response;
+        this.withoutRoot = false;
         mapper = new ObjectMapper();
         mapper.configure(SerializationConfig.Feature.WRITE_DATES_AS_TIMESTAMPS, false);
         mapper.configure(SerializationConfig.Feature.INDENT_OUTPUT, false);
         mapper.configure(SerializationConfig.Feature.WRITE_NULL_MAP_VALUES, false);
         mapper.getSerializationConfig().setSerializationInclusion(Inclusion.NON_NULL);
-        
+
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         mapper.setDateFormat(sdf);
     }
@@ -44,7 +46,7 @@ public class JacksonSerialization implements JSONSerialization {
     public <T> Serializer from(T object) {
         return from(object, null);
     }
-    
+
     @Override
     public <T> Serializer from(T object, String alias) {
         response.setContentType("application/json");
@@ -53,7 +55,7 @@ public class JacksonSerialization implements JSONSerialization {
 
     @Override
     public <T> NoRootSerialization withoutRoot() {
-        ((JacksonSerializer) getSerializer()).withoutRoot();
+        this.withoutRoot = true;
         return this;
     }
 
@@ -62,14 +64,14 @@ public class JacksonSerialization implements JSONSerialization {
         mapper.configure(SerializationConfig.Feature.INDENT_OUTPUT, true);
         return this;
     }
-    
+
     protected ObjectMapper getObjectMapper() {
         return mapper;
     }
-    
+
     protected SerializerBuilder getSerializer() {
         try {
-            return new JacksonSerializer(response.getWriter(), mapper);
+            return new JacksonSerializer(response.getWriter(), mapper, withoutRoot);
         } catch (IOException e) {
             throw new ResultException("Unable to serialize data", e);
         }

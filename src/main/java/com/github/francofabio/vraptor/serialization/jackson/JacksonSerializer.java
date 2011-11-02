@@ -38,6 +38,11 @@ public class JacksonSerializer implements SerializerBuilder {
         this.treeFields = new NamedTreeNode(null, null);
         this.mapper = mapper;
     }
+    
+    public JacksonSerializer(Writer writer, ObjectMapper mapper, boolean withoutRoot) {
+        this(writer, mapper);
+        this.withoutRoot = withoutRoot;
+    }
 
     @SuppressWarnings("unchecked")
     private static Class<?> getTypeOf(Object obj) {

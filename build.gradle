@@ -44,6 +44,7 @@ dependencies {
     compile "org.codehaus.jackson:jackson-mapper-lgpl:1.9.0"
     compile "log4j:log4j:1.2.16"
     compile "javax.servlet:servlet-api:2.5"
+    
     deployerJars "org.apache.maven.wagon:wagon-http:1.0-beta-6"
     
     testCompile "junit:junit:4.8.2"
@@ -87,7 +88,7 @@ def pomConfig = {
     parent {
 	groupId "org.sonatype.oss"
 	artifactId "oss-parent"
-	version "3"
+	version "7"
     }
     
     issueManagement {
