@@ -90,6 +90,7 @@ public class JacksonSerializeTest {
         private String name;
         private Date creationDate;
         private Group group;
+        private Object data;
 
         public Product() {
             super();
@@ -151,6 +152,14 @@ public class JacksonSerializeTest {
 
         public void setGroup(Group group) {
             this.group = group;
+        }
+
+        public Object getData() {
+            return data;
+        }
+
+        public void setData(Object data) {
+            this.data = data;
         }
 
     }
@@ -498,12 +507,24 @@ public class JacksonSerializeTest {
 
     @Test
     public void shouldSerializeIndented() {
-        String expectedResult = "{\n  \"product\" : {\n    \"id\" : 1,\n    \"name\" : \"Product 1\",\n    \"creationDate\" : \"2011-11-01\",\n    \"group\" : {\n      \"id\" : 1,\n      \"name\" : \"Group 1\"\n    }\n  }\n}";
+        String expectedResult = "{\n  \"product\" : {\n    \"id\" : 1,\n    \"name\" : \"Product 1\",\n    \"creationDate\" : \"" + currentDateAsStr + "\",\n    \"group\" : {\n      \"id\" : 1,\n      \"name\" : \"Group 1\"\n    }\n  }\n}";
 
         Group group = new Group(1L, "Group 1");
         Product product = new Product(1L, "Product 1", currentDate, group);
 
         jacksonSerialization.indented().from(product).include("group").serialize();
+        assertThat(jsonResult(), is(equalTo(expectedResult)));
+    }
+
+    @Test
+    public void shouldSerializeObjectAttribute() {
+        String expectedResult = "{\"product\":{\"id\":1,\"name\":\"Product 1\",\"creationDate\":\"" + currentDateAsStr
+                + "\",\"data\":\"data object for product\"}}";
+
+        Product product = new Product(1L, "Product 1", currentDate);
+        product.setData("data object for product");
+
+        jacksonSerialization.from(product).serialize();
         assertThat(jsonResult(), is(equalTo(expectedResult)));
     }
 

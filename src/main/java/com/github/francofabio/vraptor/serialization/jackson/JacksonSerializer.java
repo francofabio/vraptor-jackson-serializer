@@ -73,7 +73,8 @@ public class JacksonSerializer implements SerializerBuilder {
     private static boolean isNonPojo(Class<?> type) {
         return type.isPrimitive() || type.isEnum() || Number.class.isAssignableFrom(type) || type.equals(String.class)
                 || Date.class.isAssignableFrom(type) || Calendar.class.isAssignableFrom(type)
-                || Boolean.class.equals(type) || Character.class.equals(type) || Map.class.isAssignableFrom(type);
+                || Boolean.class.equals(type) || Character.class.equals(type) || Map.class.isAssignableFrom(type)
+                || Object.class.equals(type);
     }
 
     private static boolean isCollection(Type type) {
