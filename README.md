@@ -4,11 +4,12 @@ VRaptor plugin for JSON serialization using jackson library (http://jackson.code
 
 ## CONFIGURATION
 
-1. Add the dependency to your project
+1. Add the dependency to your project:
 
-    groupId: com.github.francofabio
-    artifactId: vraptor-jackson-serializer
-    version: 1.0.1
+    - **groupId**: com.github.francofabio
+    - **artifactId**: vraptor-jackson-serializer
+    - **version**: 1.0.1
+    
     
 2. Add this to your web.xml:
 
