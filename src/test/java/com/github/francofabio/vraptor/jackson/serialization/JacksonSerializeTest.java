@@ -1,4 +1,4 @@
-package com.github.francofabio.vraptor.serialization.jackson;
+package com.github.francofabio.vraptor.jackson.serialization;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -21,7 +21,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.github.francofabio.vraptor.serialization.jackson.JacksonSerialization;
+import com.github.francofabio.vraptor.jackson.model.Address;
+import com.github.francofabio.vraptor.jackson.model.Customer;
+import com.github.francofabio.vraptor.jackson.model.Group;
+import com.github.francofabio.vraptor.jackson.model.HardDisk;
+import com.github.francofabio.vraptor.jackson.model.Order;
+import com.github.francofabio.vraptor.jackson.model.Product;
+import com.github.francofabio.vraptor.jackson.serialization.JacksonSerialization;
 
 public class JacksonSerializeTest {
 
@@ -40,306 +46,6 @@ public class JacksonSerializeTest {
         this.jacksonSerialization = new JacksonSerialization(response);
         this.currentDate = new Date();
         this.currentDateAsStr = sdf.format(currentDate);
-    }
-
-    public static class Group {
-
-        private Long id;
-        private String name;
-        private List<Product> products;
-
-        public Group() {
-            super();
-        }
-
-        public Group(Long id, String name) {
-            super();
-            this.id = id;
-            this.name = name;
-        }
-
-        public Long getId() {
-            return id;
-        }
-
-        public void setId(Long id) {
-            this.id = id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public List<Product> getProducts() {
-            return products;
-        }
-
-        public void setProducts(List<Product> products) {
-            this.products = products;
-        }
-
-    }
-
-    public static class Product {
-
-        private Long id;
-        private String name;
-        private Date creationDate;
-        private Group group;
-        private Object data;
-
-        public Product() {
-            super();
-        }
-
-        public Product(Long id) {
-            super();
-            this.id = id;
-        }
-
-        public Product(Long id, String name) {
-            super();
-            this.id = id;
-            this.name = name;
-        }
-
-        public Product(Long id, String name, Date creationDate) {
-            super();
-            this.id = id;
-            this.name = name;
-            this.creationDate = creationDate;
-        }
-
-        public Product(Long id, String name, Date creationDate, Group group) {
-            super();
-            this.id = id;
-            this.name = name;
-            this.creationDate = creationDate;
-            this.group = group;
-        }
-
-        public Long getId() {
-            return id;
-        }
-
-        public void setId(Long id) {
-            this.id = id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public Date getCreationDate() {
-            return creationDate;
-        }
-
-        public void setCreationDate(Date creationDate) {
-            this.creationDate = creationDate;
-        }
-
-        public Group getGroup() {
-            return group;
-        }
-
-        public void setGroup(Group group) {
-            this.group = group;
-        }
-
-        public Object getData() {
-            return data;
-        }
-
-        public void setData(Object data) {
-            this.data = data;
-        }
-
-    }
-
-    public static class Order {
-
-        private Long id;
-        private Customer customer;
-        private Address delivery;
-        private List<Product> products;
-
-        public Order() {
-            this.products = new ArrayList<JacksonSerializeTest.Product>();
-        }
-
-        public Order(Long id, Customer customer) {
-            this();
-            this.id = id;
-        }
-
-        public Order(Long id, Customer customer, Address delivery) {
-            this();
-            this.id = id;
-            this.customer = customer;
-            this.delivery = delivery;
-        }
-
-        public Long getId() {
-            return id;
-        }
-
-        public void setId(Long id) {
-            this.id = id;
-        }
-
-        public List<Product> getProducts() {
-            return products;
-        }
-
-        public void setProducts(List<Product> products) {
-            this.products = products;
-        }
-
-        public void addProduct(Product product) {
-            this.products.add(product);
-        }
-
-        public Customer getCustomer() {
-            return customer;
-        }
-
-        public void setCustomer(Customer customer) {
-            this.customer = customer;
-        }
-
-        public Address getDelivery() {
-            return delivery;
-        }
-
-        public void setDelivery(Address delivery) {
-            this.delivery = delivery;
-        }
-
-    }
-
-    public static class HardDisk extends Product {
-
-        private long capacity;
-
-        public HardDisk() {
-            super();
-        }
-
-        public HardDisk(Long id) {
-            super(id);
-        }
-
-        public HardDisk(Long id, String name, long capacity) {
-            super(id, name);
-            this.setCapacity(capacity);
-        }
-
-        public HardDisk(Long id, String name, Date creationDate, long capacity) {
-            super(id, name, creationDate);
-            this.setCapacity(capacity);
-        }
-
-        public HardDisk(Long id, String name, Date creationDate, long capacity, Group group) {
-            super(id, name, creationDate, group);
-            this.setCapacity(capacity);
-        }
-
-        public long getCapacity() {
-            return capacity;
-        }
-
-        public void setCapacity(long capacity) {
-            this.capacity = capacity;
-        }
-
-    }
-
-    public static class Address {
-        private String street;
-        private String city;
-        private String zipCode;
-
-        public Address() {
-            super();
-        }
-
-        public Address(String street, String city, String zipCode) {
-            super();
-            this.street = street;
-            this.city = city;
-            this.zipCode = zipCode;
-        }
-
-        public String getStreet() {
-            return street;
-        }
-
-        public void setStreet(String street) {
-            this.street = street;
-        }
-
-        public String getCity() {
-            return city;
-        }
-
-        public void setCity(String city) {
-            this.city = city;
-        }
-
-        public String getZipCode() {
-            return zipCode;
-        }
-
-        public void setZipCode(String zipCode) {
-            this.zipCode = zipCode;
-        }
-
-    }
-
-    public static class Customer {
-        private Long id;
-        private String name;
-        private Address address;
-
-        public Customer(Long id, String name, Address address) {
-            super();
-            this.id = id;
-            this.name = name;
-            this.address = address;
-        }
-
-        public Long getId() {
-            return id;
-        }
-
-        public void setId(Long id) {
-            this.id = id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public Address getAddress() {
-            return address;
-        }
-
-        public void setAddress(Address address) {
-            this.address = address;
-        }
-
     }
 
     private String jsonResult() {
@@ -375,7 +81,7 @@ public class JacksonSerializeTest {
         String expectedResult = "{\"productList\":[{\"id\":1,\"name\":\"Product 1\",\"creationDate\":\""
                 + currentDateAsStr + "\"},{\"id\":2,\"name\":\"Product 2\",\"creationDate\":\"" + currentDateAsStr
                 + "\"}]}";
-        List<Product> products = new ArrayList<JacksonSerializeTest.Product>();
+        List<Product> products = new ArrayList<Product>();
         products.add(createProduct(1L));
         products.add(createProduct(2L));
 
@@ -507,7 +213,9 @@ public class JacksonSerializeTest {
 
     @Test
     public void shouldSerializeIndented() {
-        String expectedResult = "{\n  \"product\" : {\n    \"id\" : 1,\n    \"name\" : \"Product 1\",\n    \"creationDate\" : \"" + currentDateAsStr + "\",\n    \"group\" : {\n      \"id\" : 1,\n      \"name\" : \"Group 1\"\n    }\n  }\n}";
+        String expectedResult = "{\n  \"product\" : {\n    \"id\" : 1,\n    \"name\" : \"Product 1\",\n    \"creationDate\" : \""
+                + currentDateAsStr
+                + "\",\n    \"group\" : {\n      \"id\" : 1,\n      \"name\" : \"Group 1\"\n    }\n  }\n}";
 
         Group group = new Group(1L, "Group 1");
         Product product = new Product(1L, "Product 1", currentDate, group);

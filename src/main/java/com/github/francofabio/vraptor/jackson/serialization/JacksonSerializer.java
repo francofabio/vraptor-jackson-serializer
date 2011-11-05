@@ -1,4 +1,4 @@
-package com.github.francofabio.vraptor.serialization.jackson;
+package com.github.francofabio.vraptor.jackson.serialization;
 
 import java.io.Writer;
 import java.lang.reflect.Field;
