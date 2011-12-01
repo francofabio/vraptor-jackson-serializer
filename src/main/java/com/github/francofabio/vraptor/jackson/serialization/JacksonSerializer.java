@@ -38,7 +38,7 @@ public class JacksonSerializer implements SerializerBuilder {
         this.treeFields = new NamedTreeNode(null, null);
         this.mapper = mapper;
     }
-    
+
     public JacksonSerializer(Writer writer, ObjectMapper mapper, boolean withoutRoot) {
         this(writer, mapper);
         this.withoutRoot = withoutRoot;
@@ -57,7 +57,7 @@ public class JacksonSerializer implements SerializerBuilder {
 
         return obj.getClass();
     }
-    
+
     private static String getFieldName(Class<?> type) {
         String fieldName = type.getSimpleName();
         if (fieldName == null || "".equals(fieldName)) {
@@ -143,6 +143,11 @@ public class JacksonSerializer implements SerializerBuilder {
     }
 
     private void addField(String fieldName) {
+        //Ignore null objects
+        if (rootClass == null) {
+            return;
+        }
+        
         // check field
         Entry<Field, Object> fieldEntry = field(fieldName, rootClass);
 
@@ -199,25 +204,32 @@ public class JacksonSerializer implements SerializerBuilder {
     @SuppressWarnings("unchecked")
     public void serialize() {
         ObjectNode rootNode = mapper.createObjectNode();
-        if (recursive) {
-            if (withoutRoot) {
-                rootNode.POJONode(object);
-            } else {
-                rootNode.putPOJO(treeFields.getName(), object);
-            }
-        } else if (Collection.class.isAssignableFrom(object.getClass()) && !isNonPojo(rootClass)) {
-            ArrayNode arrayNode = rootNode.putArray(treeFields.getName());
-            Collection<Object> collection = (Collection<Object>) object;
+        if (object != null) {
+            if (recursive) {
+                if (withoutRoot) {
+                    rootNode.POJONode(object);
+                } else {
+                    rootNode.putPOJO(treeFields.getName(), object);
+                }
+            } else if (Collection.class.isAssignableFrom(object.getClass()) && !isNonPojo(rootClass)) {
+                ArrayNode arrayNode = rootNode.putArray(treeFields.getName());
+                Collection<Object> collection = (Collection<Object>) object;
 
-            serializeCollection(arrayNode, treeFields, collection);
-        } else if (!isNonPojo(rootClass)) {
-            ObjectNode dataRoot = (withoutRoot) ? rootNode : rootNode.putObject(treeFields.getName());
-            serialize(dataRoot, treeFields, object);
-        } else {
-            if (withoutRoot) {
-                rootNode.POJONode(object);
+                serializeCollection(arrayNode, treeFields, collection);
+            } else if (!isNonPojo(rootClass)) {
+                ObjectNode dataRoot = (withoutRoot) ? rootNode : rootNode.putObject(treeFields.getName());
+                serialize(dataRoot, treeFields, object);
             } else {
-                rootNode.putPOJO(treeFields.getName(), object);
+                if (withoutRoot) {
+                    rootNode.POJONode(object);
+                } else {
+                    rootNode.putPOJO(treeFields.getName(), object);
+                }
+            }
+        } else {
+            if (treeFields.getName() != null) {
+                //rootNode.putPOJO(fieldName, mapper.createObjectNode())
+                rootNode.putPOJO(treeFields.getName(), mapper.createObjectNode());
             }
         }
 
@@ -257,7 +269,7 @@ public class JacksonSerializer implements SerializerBuilder {
     public <T> Serializer from(T object, String alias) {
         this.object = object;
 
-        if (alias == null) {
+        if (alias == null && object != null) {
             Class<?> type = getTypeOf(object);
             String name = getFieldName(type);
             if (isCollection(object.getClass())) {
@@ -268,13 +280,17 @@ public class JacksonSerializer implements SerializerBuilder {
             treeFields.setName(alias);
         }
 
-        rootClass = getTypeOf(object);
-
-        if (!isNonPojo(rootClass)) {
-            includePrimitiveFields(rootClass, null);
+        if (object != null) {
+            rootClass = getTypeOf(object);
+            
+            if (!isNonPojo(rootClass)) {
+                includePrimitiveFields(rootClass, null);
+            }
+        } else {
+            rootClass = null;
         }
 
         return this;
     }
-    
+
 }

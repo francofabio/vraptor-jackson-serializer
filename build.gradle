@@ -5,7 +5,7 @@ apply plugin: "signing"
 
 description = "VRaptor plugin for JSON serialization using jackson library"
 group = "com.github.francofabio"
-version = "1.0.4"
+version = "1.0.5"
 
 sourceCompatibility = 1.6
 targetCompatibility = 1.6

@@ -235,5 +235,37 @@ public class JacksonSerializeTest {
         jacksonSerialization.from(product).serialize();
         assertThat(jsonResult(), is(equalTo(expectedResult)));
     }
+    
+    @Test
+    public void shouldSerializeNull() {
+        String expectedResult = "{}";
+
+        jacksonSerialization.from(null).serialize();
+        assertThat(jsonResult(), is(equalTo(expectedResult)));
+    }
+    
+    @Test
+    public void shouldSerializeNullWithInclude() {
+        String expectedResult = "{}";
+        
+        jacksonSerialization.from(null).include("name").serialize();
+        assertThat(jsonResult(), is(equalTo(expectedResult)));
+    }
+    
+    @Test
+    public void shouldSerializeNullWithExclude() {
+        String expectedResult = "{}";
+        
+        jacksonSerialization.from(null).exclude("name").serialize();
+        assertThat(jsonResult(), is(equalTo(expectedResult)));
+    }
+    
+    @Test
+    public void shouldSerializeNullWithAlias() {
+        String expectedResult = "{\"products\":{}}";
+
+        jacksonSerialization.from(null, "products").serialize();
+        assertThat(jsonResult(), is(equalTo(expectedResult)));
+    }
 
 }
