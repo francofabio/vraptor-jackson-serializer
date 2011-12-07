@@ -49,6 +49,7 @@ dependencies {
     
     testCompile "junit:junit:4.8.2"
     testCompile "org.mockito:mockito-all:1.9.0-rc1"
+    testCompile "commons-codec:commons-codec:1.6"
 }
 
 manifest.mainAttributes(

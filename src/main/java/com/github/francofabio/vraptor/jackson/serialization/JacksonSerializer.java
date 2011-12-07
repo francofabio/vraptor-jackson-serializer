@@ -74,7 +74,7 @@ public class JacksonSerializer implements SerializerBuilder {
         return type.isPrimitive() || type.isEnum() || Number.class.isAssignableFrom(type) || type.equals(String.class)
                 || Date.class.isAssignableFrom(type) || Calendar.class.isAssignableFrom(type)
                 || Boolean.class.equals(type) || Character.class.equals(type) || Map.class.isAssignableFrom(type)
-                || Object.class.equals(type);
+                || Object.class.equals(type) || (type.isArray() && type.getComponentType().equals(Byte.TYPE));
     }
 
     private static boolean isCollection(Type type) {
