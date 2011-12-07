@@ -8,6 +8,7 @@ public class Product {
     private Date creationDate;
     private Group group;
     private Object data;
+    private byte[] image;
 
     public Product() {
         super();
@@ -77,5 +78,13 @@ public class Product {
 
     public void setData(Object data) {
         this.data = data;
+    }
+
+    public byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
     }
 }
