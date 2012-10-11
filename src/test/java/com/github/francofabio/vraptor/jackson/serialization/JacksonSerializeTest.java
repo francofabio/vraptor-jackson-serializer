@@ -3,6 +3,7 @@ package com.github.francofabio.vraptor.jackson.serialization;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -15,6 +16,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -279,6 +281,14 @@ public class JacksonSerializeTest {
 
         jacksonSerialization.from(null, "products").serialize();
         assertThat(jsonResult(), is(equalTo(expectedResult)));
+    }
+    
+    @Test
+    public void shouldSerializeUsingFieldsNotGetterMethods(){
+        UUID uuid = UUID.fromString("b968a7c0-13dd-11e2-892e-0800200c9a66");
+        String expected = "{\"uUID\":{\"serialVersionUID\":-4856846361193249489,\"mostSigBits\":-5086631335706160670,\"leastSigBits\":-8561897044954015130,\"$assertionsDisabled\":true}}";
+        jacksonSerialization.from(uuid).serialize();
+        assertThat(jsonResult(), is(equalTo(expected)));
     }
 
 }

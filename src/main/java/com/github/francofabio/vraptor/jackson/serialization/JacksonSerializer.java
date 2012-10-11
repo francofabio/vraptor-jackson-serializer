@@ -131,7 +131,7 @@ public class JacksonSerializer implements SerializerBuilder {
             }
             if (value != null) {
                 try {
-                    lastValue = new Mirror().on(lastValue).invoke().getterFor(lastField.getName());
+                    lastValue = new Mirror().on(lastValue).get().field(lastField.getName());
                 } catch (Exception e) {
                     throw new ResultException("Unable to retrieve the value of field: " + fieldName, e);
                 }
