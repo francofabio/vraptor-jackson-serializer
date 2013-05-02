@@ -11,6 +11,7 @@ import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -76,6 +77,17 @@ public class JacksonSerializeTest {
         jacksonSerialization.from(product).serialize();
         assertThat(jsonResult(), is(equalTo(expectedResult)));
     }
+    
+    @Test
+    public void shouldSerializeRecursivePojo() {
+        String expectedResult = "{\"product\":{\"id\":1,\"name\":\"Product 1\",\"creationDate\":\"" + currentDateAsStr
+                + "\",\"data\":\"product data\"}}";
+        Product product = createProduct(1L);
+        product.setData("product data");
+
+        jacksonSerialization.from(product).recursive().serialize();
+        assertThat(jsonResult(), is(equalTo(expectedResult)));
+    }
 
     @Test
     public void shouldSerializeCollectionOfPojo() {
@@ -111,6 +123,18 @@ public class JacksonSerializeTest {
         jacksonSerialization.from(json, "person").serialize();
         assertThat(jsonResult(), is(equalTo(expectedResult)));
     }
+    
+    @Test
+    public void shouldSerializeMapWithoutRoot() {
+        String expectedResult = "{\"email\":\"ff@gmail.com\",\"idade\":28,\"name\":\"fabio franco\"}";
+        Map<String, Object> json = new HashMap<String, Object>();
+        json.put("name", "fabio franco");
+        json.put("idade", 28);
+        json.put("email", "ff@gmail.com");
+
+        jacksonSerialization.withoutRoot().from(json).serialize();
+        assertThat(jsonResult(), is(equalTo(expectedResult)));
+    }
 
     @Test
     public void shouldSerializeList() {
@@ -121,6 +145,18 @@ public class JacksonSerializeTest {
         list.add("json");
 
         jacksonSerialization.from(list, "list").serialize();
+        assertThat(jsonResult(), is(equalTo(expectedResult)));
+    }
+    
+    @Test
+    public void shouldSerializeListWithoutRoot() {
+        String expectedResult = "[1,2,3,4,5,6,\"json\"]";
+
+        List<Object> list = new ArrayList<Object>();
+        list.addAll(Arrays.asList(1, 2, 3, 4, 5, 6));
+        list.add("json");
+
+        jacksonSerialization.withoutRoot().from(list).serialize();
         assertThat(jsonResult(), is(equalTo(expectedResult)));
     }
 
@@ -209,6 +245,31 @@ public class JacksonSerializeTest {
         Product product = new Product(1L, "Product 1", currentDate, group);
 
         jacksonSerialization.withoutRoot().from(product).include("group").exclude("group.id").serialize();
+        assertThat(jsonResult(), is(equalTo(expectedResult)));
+    }
+    
+    @Test
+    public void shouldSerializeRecursiveWithouRoot() {
+        String expectedResult = "{\"id\":1,\"name\":\"Product 1\",\"creationDate\":\"" + currentDateAsStr
+                + "\",\"group\":{\"id\":1,\"name\":\"Group 1\"},\"data\":\"product data\"}";
+
+        Group group = new Group(1L, "Group 1");
+        Product product = new Product(1L, "Product 1", currentDate, group);
+        product.setData("product data");
+
+        jacksonSerialization.withoutRoot().from(product).recursive().serialize();
+        assertThat(jsonResult(), is(equalTo(expectedResult)));
+    }
+    
+    @Test
+    public void shouldSerializeCollectionWithouRoot() {
+        String expectedResult = "[{\"id\":1,\"name\":\"Product 1\",\"creationDate\":\"" + currentDateAsStr
+                + "\",\"group\":{\"name\":\"Group 1\"}}]";
+
+        Group group = new Group(1L, "Group 1");
+        Product product = new Product(1L, "Product 1", currentDate, group);
+
+        jacksonSerialization.withoutRoot().from(Collections.singletonList(product)).include("group").exclude("group.id").serialize();
         assertThat(jsonResult(), is(equalTo(expectedResult)));
     }
 

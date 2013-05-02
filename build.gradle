@@ -5,7 +5,7 @@ apply plugin: "signing"
 
 description = "VRaptor plugin for JSON serialization using jackson library"
 group = "com.github.francofabio"
-version = "1.0.6"
+version = "1.0.7"
 
 sourceCompatibility = 1.6
 targetCompatibility = 1.6
@@ -13,10 +13,10 @@ targetCompatibility = 1.6
 [compileJava, compileTestJava]*.options.collect {options -> options.encoding = "UTF-8"}
 
 repositories {
-  mavenCentral()
-  maven {
-    url "https://repository.jboss.org/nexus/content/repositories/releases/"
-  }
+    mavenCentral()
+    maven {
+       url "https://repository.jboss.org/nexus/content/repositories/releases/"
+    }
 }
 
 task createPrefs << {
@@ -26,7 +26,7 @@ task createPrefs << {
     File outDir = new File(".settings/")
     File prefsFile = new File(outDir, "org.eclipse.core.resources.prefs")
     if (!outDir.exists()) {
-	outDir.mkdirs()
+        outDir.mkdirs()
     }
     props.store(new java.io.FileOutputStream(prefsFile),null)
 }
@@ -45,11 +45,11 @@ dependencies {
     compile "log4j:log4j:1.2.16"
     compile "javax.servlet:servlet-api:2.5"
     
-    deployerJars "org.apache.maven.wagon:wagon-http:1.0-beta-6"
-    
     testCompile "junit:junit:4.8.2"
     testCompile "org.mockito:mockito-all:1.9.0-rc1"
     testCompile "commons-codec:commons-codec:1.6"
+    
+    deployerJars "org.apache.maven.wagon:wagon-http:1.0-beta-6"
 }
 
 manifest.mainAttributes(
@@ -87,9 +87,9 @@ def pomConfig = {
     url "https://github.com/francofabio/vraptor-jackson-serializer"
     
     parent {
-	groupId "org.sonatype.oss"
-	artifactId "oss-parent"
-	version "7"
+    	groupId "org.sonatype.oss"
+    	artifactId "oss-parent"
+    	version "7"
     }
     
     issueManagement {
@@ -97,23 +97,23 @@ def pomConfig = {
         url "https://github.com/francofabio/vraptor-jackson-serializer/issues"
     }
     scm {
-	url "https://github.com/francofabio/vraptor-jackson-serializer"
-	connection "scm:git:git://github.com/francofabio/vraptor-jackson-serializer"
-	developerConnection "scm:git:git@github.com:francofabio/vraptor-jackson-serializer.git"
+        url "https://github.com/francofabio/vraptor-jackson-serializer"
+        connection "scm:git:git://github.com/francofabio/vraptor-jackson-serializer"
+        developerConnection "scm:git:git@github.com:francofabio/vraptor-jackson-serializer.git"
     }
     licenses {
-	license {
-	    name "Apache License, Version 2.0"
-	    url "http://www.apache.org/licenses/LICENSE-2.0.html"
-	    distribution "repo"
-	}
+        license {
+            name "Apache License, Version 2.0"
+            url "http://www.apache.org/licenses/LICENSE-2.0.html"
+            distribution "repo"
+        }
     }
     developers {
         developer {
             id "francofabio"
             name "Fabio Franco"
-	    email "francofabio@gmail.com"
-	    timezone "-3"
+            email "francofabio@gmail.com"
+            timezone "-3"
         }
     }
 }
@@ -127,14 +127,14 @@ if (! hasProperty( "pass" ) ) {
 
 uploadArchives {
     repositories.mavenDeployer {
-        name = "jbossDeployer"
+        name = "oss-staging"
         configuration = configurations.deployerJars
         pom.project pomConfig
-	
-	beforeDeployment { MavenDeployment deployment ->
-	    signPom(deployment)
-	}
-	
+
+        beforeDeployment { MavenDeployment deployment ->
+            signPom(deployment)
+        }
+
         repository(id: "nexus-releases", url: "http://oss.sonatype.org/service/local/staging/deploy/maven2") {
             authentication(userName: user, password: pass)
         }

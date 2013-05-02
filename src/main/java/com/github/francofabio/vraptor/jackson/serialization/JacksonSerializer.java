@@ -204,15 +204,26 @@ public class JacksonSerializer implements SerializerBuilder {
     @SuppressWarnings("unchecked")
     public void serialize() {
         ObjectNode rootNode = mapper.createObjectNode();
+        /*
+         * This solution was chosen to meet serialization without root
+         */
+        Object root = rootNode;
         if (object != null) {
             if (recursive) {
                 if (withoutRoot) {
-                    rootNode.POJONode(object);
+                	root = mapper.getNodeFactory().POJONode(object);
                 } else {
                     rootNode.putPOJO(treeFields.getName(), object);
                 }
             } else if (Collection.class.isAssignableFrom(object.getClass()) && !isNonPojo(rootClass)) {
-                ArrayNode arrayNode = rootNode.putArray(treeFields.getName());
+                ArrayNode arrayNode;
+                if (withoutRoot) {
+                	arrayNode = mapper.createArrayNode();
+                	root = arrayNode;
+                } else {
+                	arrayNode = rootNode.putArray(treeFields.getName());
+                }
+                
                 Collection<Object> collection = (Collection<Object>) object;
 
                 serializeCollection(arrayNode, treeFields, collection);
@@ -221,20 +232,19 @@ public class JacksonSerializer implements SerializerBuilder {
                 serialize(dataRoot, treeFields, object);
             } else {
                 if (withoutRoot) {
-                    rootNode.POJONode(object);
+                	root = object;
                 } else {
                     rootNode.putPOJO(treeFields.getName(), object);
                 }
             }
         } else {
             if (treeFields.getName() != null) {
-                //rootNode.putPOJO(fieldName, mapper.createObjectNode())
                 rootNode.putPOJO(treeFields.getName(), mapper.createObjectNode());
             }
         }
 
         try {
-            mapper.writeValue(writer, rootNode);
+            mapper.writeValue(writer, root);
         } catch (Exception e) {
             throw new ResultException("Unable to generate JSON", e);
         }
