@@ -2,6 +2,7 @@ package com.github.francofabio.vraptor.jackson.serialization;
 
 import java.io.Writer;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
@@ -12,6 +13,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.vidageek.mirror.bean.Bean;
 import net.vidageek.mirror.dsl.Mirror;
 
 import org.codehaus.jackson.map.ObjectMapper;
@@ -129,10 +131,28 @@ public class JacksonSerializer implements SerializerBuilder {
             if (lastField == null) {
                 throw new ResultException("Field " + fieldName + " not found. Class: " + clazz);
             }
+//            if (value != null) {
+//                try {
+//                    lastValue = new Mirror().on(lastValue).invoke().getterFor(lastField.getName());
+//                } catch (Exception e) {
+//                    throw new ResultException("Unable to retrieve the value of field: " + fieldName, e);
+//                }
+//            }
             if (value != null) {
                 try {
-                    lastValue = new Mirror().on(lastValue).invoke().getterFor(lastField.getName());
+                    boolean hasGetter = false;
+                    for (String string : new Bean().getter(lastField.getName())) {
+                        Method method = new Mirror().on(clazz).reflect().method(string).withoutArgs();
+                        if (method != null)
+                            hasGetter = true;
+                    }
+                    if (hasGetter) {
+                        lastValue = new Mirror().on(lastValue).invoke().getterFor(lastField.getName());
+                    } else {
+                        lastValue = null;
+                    }
                 } catch (Exception e) {
+                    e.printStackTrace();
                     throw new ResultException("Unable to retrieve the value of field: " + fieldName, e);
                 }
             }
